@@ -41,18 +41,18 @@ user_input = st.text_area("Apna Message yahan paste karein:", placeholder="Type 
 if st.button("Predict"):
     if user_input.strip() == "":
         st.warning("Pehle text enter karein!")
-       else:
-            # Bank ke genuine keywords check karne ke liye rule
-            safe_keywords = ["debited", "credited", "refno", "upi user", "a/c", "sbi"]
-            is_bank_msg = any(word in user_input.lower() for word in safe_keywords)
+    else:
+        # Bank ke genuine keywords check karne ke liye rule
+        safe_keywords = ["debited", "credited", "refno", "upi user", "a/c", "sbi"]
+        is_bank_msg = any(word in user_input.lower() for word in safe_keywords)
 
-            vect = cv.transform([user_input])
-            prediction = model.predict(vect)
-            
-            # Agar model spam bolta hai par bank ka asli keyword hai, toh use safe dikhayein
-            if prediction[0] == 1 and is_bank_msg:
-                st.success("✅ Safe (HAM) Message.")
-            elif prediction[0] == 1:
-                st.error("🚨 SPAM Message!")
-            else:
-                st.success("✅ Safe (HAM) Message.")
+        vect = cv.transform([user_input])
+        prediction = model.predict(vect)
+        
+        # Agar model spam bolta hai par bank ka asli keyword hai, toh use safe dikhayein
+        if prediction[0] == 1 and is_bank_msg:
+            st.success("✅ Safe (HAM) Message.")
+        elif prediction[0] == 1:
+            st.error("🚨 SPAM Message!")
+        else:
+            st.success("✅ Safe (HAM) Message.")
