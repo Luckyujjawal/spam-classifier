@@ -46,16 +46,28 @@ svg_content = f"""<svg xmlns='http://www.w3.org/2000/svg' width='450' height='72
 encoded_svg = base64.b64encode(svg_content.encode('utf-8')).decode('utf-8')
 bg_image_url = f"data:image/svg+xml;base64,{encoded_svg}"
 
-# --- CSS STYLING (WITH HIDDEN AUDIO PLAYER) ---
+# --- CSS STYLING (WITH HIDDEN AUDIO & COMPLETELY HIDDEN STREAMLIT BRANDING) ---
 global_css = f"""
 <style>
-    /* HIDE THE STREAMLIT AUDIO PLAYER CONTAINER COMPLETELY */
+    /* 1. HIDE ALL STREAMLIT BRANDING, MENUS, DEPLOY BUTTONS AND FOOTERS */
+    #MainMenu {{ visibility: hidden !important; }}
+    footer {{ visibility: hidden !important; display: none !important; }}
+    header {{ visibility: hidden !important; display: none !important; }}
+    [data-testid="stHeader"] {{ display: none !important; visibility: hidden !important; }}
+    [data-testid="stToolbar"] {{ display: none !important; }}
+    [data-testid="stDecoration"] {{ display: none !important; }}
+    [data-testid="stStatusWidget"] {{ display: none !important; }}
+    div[data-testid="stDeployButton"] {{ display: none !important; }}
+    .viewerBadge_container__1S9of {{ display: none !important; }}
+    
+    /* 2. HIDE THE STREAMLIT AUDIO PLAYER CONTAINER COMPLETELY */
     .stAudio {{
         display: none !important;
         height: 0px !important;
         visibility: hidden !important;
     }}
 
+    /* 3. Main Container Settings */
     [data-testid="stAppViewContainer"] {{
         background-color: #121624 !important;
         background-image: url("{bg_image_url}") !important;
@@ -64,7 +76,7 @@ global_css = f"""
         animation: matrixScroll 15s linear infinite !important;
     }}
 
-    section.main, .stApp, [data-testid="stHeader"], [data-testid="stSidebar"] {{
+    section.main, .stApp, [data-testid="stSidebar"] {{
         background: transparent !important;
     }}
 
@@ -78,6 +90,7 @@ global_css = f"""
         padding: 35px !important;
     }}
 
+    /* 4. Text & Input Area Styling */
     h1 {{
         color: #00ff66 !important;
         font-family: 'Courier New', monospace !important;
@@ -100,6 +113,7 @@ global_css = f"""
         border-radius: 8px !important;
     }}
 
+    /* 5. Custom Button Design */
     div.stButton > button {{
         background-color: #00ff66 !important;
         color: #121624 !important;
