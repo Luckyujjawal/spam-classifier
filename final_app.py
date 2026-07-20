@@ -4,34 +4,43 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 
-# --- DATA LOAD ---
-try:
-    df = pd.read_csv("spam (1).csv", encoding="latin-1")
-    df = df.dropna(how="any", axis=1)
-    df.columns = ["label", "message"]
-except Exception as e:
-    st.error(f"Dataset load nahi ho paya! Error: {e}")
-
-# Data prep
-df["label_num"] = df["label"].map({"ham": 0, "spam": 1})
-X = df["message"]
-y = df["label_num"]
-
-# Train-Test Split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Vectorization
-cv = CountVectorizer()
-X_train_vectorized = cv.fit_transform(X_train)
-X_test_vectorized = cv.transform(X_test)
-
-# Model Training
-model = MultinomialNB()
-model.fit(X_train_vectorized, y_train)
-accuracy = model.score(X_test_vectorized, y_test)
-
 # --- WEB UI CONFIG ---
 st.set_page_config(page_title="AI Spam Classifier", page_icon="🛡️")
+
+# --- CACHED MODEL TRAINING ---
+# Isse model training sirf ek baar website khulne par hogi, click karne par delay khatam!
+@st.cache_resource
+def load_and_train_model():
+    try:
+        df = pd.read_csv("spam (1).csv", encoding="latin-1")
+        df = df.dropna(how="any", axis=1)
+        df.columns = ["label", "message"]
+    except Exception as e:
+        return None, None, 0.0
+
+    df["label_num"] = df["label"].map({"ham": 0, "spam": 1})
+    X = df["message"]
+    y = df["label_num"]
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    cv = CountVectorizer()
+    X_train_vectorized = cv.fit_transform(X_train)
+    X_test_vectorized = cv.transform(X_test)
+
+    model = MultinomialNB()
+    model.fit(X_train_vectorized, y_train)
+    accuracy = model.score(X_test_vectorized, y_test)
+    
+    return model, cv, accuracy
+
+# Resources load karein
+model, cv, accuracy = load_and_train_model()
+
+if model is None:
+    st.error("Dataset load nahi ho paya!")
+    st.stop()
+
 st.title("🛡️ AI Spam Email/SMS Classifier")
 st.write(f"Model Accuracy: **{accuracy*100:.2f}%**")
 st.write("---")
@@ -54,7 +63,7 @@ def play_voice_alert(text):
                     window.speechSynthesis.speak(msg);
                 }}
             }}
-            setTimeout(speak, 100);
+            setTimeout(speak, 10); // Instant 10 milliseconds delay
         </script>
     " allow="autoplay" style="display:none; width:0; height:0; border:none;"></iframe>
     """
@@ -73,7 +82,7 @@ if st.button("Predict"):
         safe_keywords = ["debited", "credited", "refno", "upi user", "a/c", "sbi"]
         is_bank_msg = any(word in user_input.lower() for word in safe_keywords)
 
-        # Vectorization & Prediction
+        # Vectorization & Prediction (Instant because model is pre-trained)
         vect = cv.transform([user_input])
         prediction = model.predict(vect)
         
