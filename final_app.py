@@ -9,34 +9,33 @@ from sklearn.naive_bayes import MultinomialNB
 # --- WEB UI CONFIG ---
 st.set_page_config(page_title="AI Cyber Shield Classifier", page_icon="🛡️", layout="centered")
 
-# --- GENERATE ULTRA-BRIGHT MATRIX RAIN SVG ---
-# Is baar hum aur zyada dense, bright aur clear binary numbers generator design kar rahe hain
+# --- GENERATE BRIGHT NEON GREEN MATRIX RAIN ON LITE BLACK SVG ---
+# Humne background ko lite black aur saare characters ko pure neon green kar diya hai
 svg_cols = []
-random.seed(101)  # Pattern hamesha beautiful aur synchronized rahe
+random.seed(101)  # Beautiful pattern generation symmetry
 
-for col in range(25):  # Dense columns
+for col in range(25):  # High density columns for clear look
     x = col * 18 + 8
-    # Har column ke liye random length aur position generator
     for row in range(22):
         y = row * 36 + random.randint(0, 15)
         char = random.choice(['0', '1'])
         
-        # Super Bright Colors Scheme for Extreme Visibility
+        # 100% Neon Green color scheme with high contrast opacities
         rand_val = random.random()
-        if rand_val > 0.85:
-            color = "%23ffffff"  # Glowing white head for true matrix feeling
+        if rand_val > 0.7:
+            color = "%2300ff66"  # Extra Bright Glowing Neon Green
             opacity = 1.0
-            font_size = 18
+            font_size = 17
             font_weight = "900"  # Extra Bold
-        elif rand_val > 0.4:
-            color = "%2300ff66"  # Ultra bright neon green
-            opacity = 0.95
-            font_size = 16
+        elif rand_val > 0.3:
+            color = "%2300e65c"  # Standard Bright Neon Green
+            opacity = 0.90
+            font_size = 15
             font_weight = "bold"
         else:
-            color = "%231aff66"  # Bright vibrant green
-            opacity = 0.80
-            font_size = 14
+            color = "%2300cc52"  # Vivid Green for depth
+            opacity = 0.75
+            font_size = 13
             font_weight = "bold"
 
         svg_cols.append(
@@ -44,29 +43,29 @@ for col in range(25):  # Dense columns
             f"font-family='monospace' font-size='{font_size}' font-weight='{font_weight}'>{char}</text>"
         )
 
+# Background fill set to Lite Black / Charcoal Gray (%23121624) for supreme contrast
 svg_content = f"""<svg xmlns='http://www.w3.org/2000/svg' width='450' height='800' viewBox='0 0 450 800'>
-    <rect width='100%25' height='100%25' fill='%2302050e'/>
+    <rect width='100%25' height='100%25' fill='%23121624'/>
     {"".join(svg_cols)}
 </svg>"""
 
-# Base64 string encoding to bypass all web browser restrictions
+# Base64 encoding to bypass browser blocking completely
 encoded_svg = base64.b64encode(svg_content.encode('utf-8')).decode('utf-8')
 bg_image_url = f"data:image/svg+xml;base64,{encoded_svg}"
 
 # --- GLOBAL STYLING & STREAMLIT INNER-SHELL TRANSPARENCY ---
 global_css = f"""
 <style>
-    /* 1. Applying the Scrolling Matrix background directly to the top-level container */
+    /* 1. Set the bright scrolling matrix background on the main app viewport container */
     [data-testid="stAppViewContainer"] {{
-        background-color: #02050e !important;
+        background-color: #121624 !important; /* Lite Black */
         background-image: url("{bg_image_url}") !important;
         background-repeat: repeat !important;
         background-size: 450px 800px !important;
         animation: matrixScroll 12s linear infinite !important;
     }}
 
-    /* 2. FORCE COMPLETE TRANSPARENCY on all of Streamlit's default dark overlay divs */
-    /* Isse background image bina kisi lag ya dimming ke 100% chamakdar dikhegi */
+    /* 2. Remove all default Streamlit background overlays so that the matrix rain is 100% visible */
     section.main, 
     .stApp, 
     [data-testid="stHeader"], 
@@ -79,9 +78,9 @@ global_css = f"""
         background-color: transparent !important;
     }}
 
-    /* 3. Center Cyber glass card wrapper design for best readability */
+    /* 3. Main center card container - Styled dark solid black to separate text from background rain */
     [data-testid="stAppViewBlockContainer"] {{
-        background-color: rgba(5, 10, 20, 0.95) !important; /* Non-transparent solid dark card */
+        background-color: #080b11 !important; /* Pure solid dark background for the box */
         border: 2px solid #00ff66 !important;
         border-radius: 16px !important;
         box-shadow: 0 0 40px rgba(0, 255, 102, 0.3) !important;
@@ -107,7 +106,7 @@ global_css = f"""
 
     /* 5. Custom Input Area Box Styling */
     .stTextArea textarea {{
-        background-color: #080d1a !important;
+        background-color: #0c0f17 !important;
         color: #00ff66 !important;
         border: 1px solid rgba(0, 255, 102, 0.5) !important;
         font-family: 'Courier New', monospace !important;
@@ -123,7 +122,7 @@ global_css = f"""
     /* 6. Scan Button design */
     div.stButton > button {{
         background-color: #00ff66 !important;
-        color: #02050e !important;
+        color: #121624 !important;
         font-weight: bold !important;
         font-family: monospace !important;
         border: none !important;
