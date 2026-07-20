@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🛡️ Cyber Spam Shield</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #121624;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            background: transparent;
+        }
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0c0f19;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(0, 255, 102, 0.1);
+            border-left-color: #00ff66;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.4);
+            margin-bottom: 20px;
+        }
+        .loading-text {
+            color: #00ff66;
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-shadow: 0 0 8px rgba(0, 255, 102, 0.6);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        .fade-out {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Professional Hacker Loading Screen -->
+    <div id="loader">
+        <div class="spinner"></div>
+        <div class="loading-text">Bypassing Firewalls...</div>
+    </div>
+
+    <!-- Embedded Secure Streamlit App -->
+    <iframe 
+        id="appFrame"
+        src="https://uk-spam-classifier.streamlit.app/?embed=true" 
+        allow="autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen>
+    </iframe>
+
+    <script>
+        const iframe = document.getElementById('appFrame');
+        const loader = document.getElementById('loader');
+
+        iframe.onload = function() {
+            setTimeout(() => {
+                loader.classList.add('fade-out');
+            }, 1500); 
+        };
+
+        // Fallback
+        setTimeout(() => {
+            if (!loader.classList.contains('fade-out')) {
+                loader.classList.add('fade-out');
+            }
+        }, 5000);
+    </script>
+</body>
+</html>
