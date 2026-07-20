@@ -1,6 +1,5 @@
 import pandas as pd
 import streamlit as st
-import urllib.parse
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
@@ -40,35 +39,55 @@ st.write("---")
 # User Input Box
 user_input = st.text_area("Apna Message yahan paste karein:", placeholder="Type or paste your SMS here...")
 
-# --- INSTANT VOICE PLAY FUNCTION ---
-# Yeh bina kisi extra click ke direct dynamic voice play karega
+# --- GUARANTEED AUTO-PLAY VOICE FUNCTION ---
 def play_voice_alert(text):
-    encoded_text = urllib.parse.quote(text)
-    # Google's clean Hindi TTS API URL
-    audio_url = f"https://translate.google.com/translate_tts?ie=UTF-8&tl=hi&client=tw-ob&q={encoded_text}"
-    st.audio(audio_url, format="audio/mp3", autoplay=True)
+    iframe_html = f"""
+    <iframe srcdoc="
+        <script>
+            function speak() {{
+                if ('speechSynthesis' in window) {{
+                    window.speechSynthesis.cancel(); // Purani aawaz ko rokein
+                    var msg = new SpeechSynthesisUtterance('{text}');
+                    msg.lang = 'hi-IN'; // Pure Hindi Accent
+                    msg.pitch = 1.0;
+                    msg.rate = 1.0;
+                    window.speechSynthesis.speak(msg);
+                }}
+            }}
+            setTimeout(speak, 100);
+        </script>
+    " allow="autoplay" style="display:none; width:0; height:0; border:none;"></iframe>
+    """
+    st.markdown(iframe_html, unsafe_allow_html=True)
 
 # Predict Button logic
 if st.button("Predict"):
     if user_input.strip() == "":
         st.warning("Pehle text enter karein!")
     else:
-        # Bank ke genuine keywords check karne ke liye custom bypass rule
+        # 1. Custom Bypass Rules for Common Spam keywords
+        spam_keywords = ["won", "claim", "clam", "lottery", "prize", "crore", "lakh", "selected", "free gift", "rewarded"]
+        is_spam_keyword = any(word in user_input.lower() for word in spam_keywords)
+
+        # 2. Bank/Safe Keywords
         safe_keywords = ["debited", "credited", "refno", "upi user", "a/c", "sbi"]
         is_bank_msg = any(word in user_input.lower() for word in safe_keywords)
 
+        # Vectorization & Prediction
         vect = cv.transform([user_input])
         prediction = model.predict(vect)
         
-        # Result decision
-        if prediction[0] == 1 and is_bank_msg:
+        # Final Decision Logic
+        if is_bank_msg:
             is_spam = False
+        elif is_spam_keyword:
+            is_spam = True
         elif prediction[0] == 1:
             is_spam = True
         else:
             is_spam = False
 
-        # Output Results with Auto-play audio
+        # Output Results
         if is_spam:
             st.error("🚨 SPAM Message!")
             play_voice_alert("सावधान! यह एक फ्रॉड या स्पैम संदेश हो सकता है।")
