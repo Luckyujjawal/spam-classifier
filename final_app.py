@@ -2,6 +2,8 @@ import pandas as pd
 import streamlit as st
 import base64
 import random
+import io
+from gtts import gTTS
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
@@ -44,7 +46,7 @@ svg_content = f"""<svg xmlns='http://www.w3.org/2000/svg' width='450' height='72
 encoded_svg = base64.b64encode(svg_content.encode('utf-8')).decode('utf-8')
 bg_image_url = f"data:image/svg+xml;base64,{encoded_svg}"
 
-# --- CSS WITH HARDWARE ACCELERATION ---
+# --- CSS STYLING ---
 global_css = f"""
 <style>
     [data-testid="stAppViewContainer"] {{
@@ -53,7 +55,6 @@ global_css = f"""
         background-repeat: repeat !important;
         background-size: 450px 720px !important;
         animation: matrixScroll 15s linear infinite !important;
-        will-change: background-position;
     }}
 
     section.main, .stApp, [data-testid="stHeader"], [data-testid="stSidebar"] {{
@@ -145,25 +146,13 @@ if model is None:
     st.error("Dataset load nahi ho paya!")
     st.stop()
 
-# --- HIGH-PRIORITY INSTANT SPEECH ENGINE ---
+# --- NATIVE MP3 AUDIO PLAYER (Instant Playback) ---
 def play_voice_alert(text):
-    iframe_html = f"""
-    <iframe srcdoc="
-        <script>
-            window.onload = function() {{
-                if ('speechSynthesis' in window) {{
-                    window.speechSynthesis.cancel();
-                    var msg = new SpeechSynthesisUtterance('{text}');
-                    msg.lang = 'hi-IN';
-                    msg.pitch = 1.0;
-                    msg.rate = 1.0;
-                    window.speechSynthesis.speak(msg);
-                }}
-            }};
-        </script>
-    " allow="autoplay" style="display:none; width:0; height:0; border:none; visibility:hidden;"></iframe>
-    """
-    st.markdown(iframe_html, unsafe_allow_html=True)
+    tts = gTTS(text=text, lang='hi')
+    fp = io.BytesIO()
+    tts.write_to_fp(fp)
+    fp.seek(0)
+    st.audio(fp, format="audio/mp3", autoplay=True)
 
 # --- UI LAYOUT ---
 st.title("🛡️ CYBER SPAM SHIELD")
