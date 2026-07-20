@@ -8,6 +8,8 @@ from sklearn.naive_bayes import MultinomialNB
 st.set_page_config(page_title="AI Cyber Shield Classifier", page_icon="🛡️", layout="centered")
 
 # --- PRO FOOTER & TRANSPARENT MATRIX CSS + JS ---
+# This script injects the Matrix binary code directly into the parent document, 
+# ensuring it sits behind everything and runs without glitches or overlaps.
 matrix_bg_html = """
 <canvas id="matrixCanvas"></canvas>
 <style>
