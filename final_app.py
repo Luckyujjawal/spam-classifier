@@ -46,57 +46,69 @@ svg_content = f"""<svg xmlns='http://www.w3.org/2000/svg' width='450' height='72
 encoded_svg = base64.b64encode(svg_content.encode('utf-8')).decode('utf-8')
 bg_image_url = f"data:image/svg+xml;base64,{encoded_svg}"
 
-# --- CSS STYLING (WITH HIDDEN AUDIO & COMPLETELY HIDDEN STREAMLIT BRANDING) ---
+# --- CSS STYLING (FORCE HIDE STREAMLIT BOTTOM FOOTER BAR) ---
 global_css = f"""
 <style>
-    /* 1. HIDE ALL STREAMLIT BRANDING, MENUS, DEPLOY BUTTONS AND FOOTERS */
-    #MainMenu {{ visibility: hidden !important; }}
-    footer {{ visibility: hidden !important; display: none !important; }}
-    header {{ visibility: hidden !important; display: none !important; }}
-    [data-testid="stHeader"] {{ display: none !important; visibility: hidden !important; }}
-    [data-testid="stToolbar"] {{ display: none !important; }}
-    [data-testid="stDecoration"] {{ display: none !important; }}
-    [data-testid="stStatusWidget"] {{ display: none !important; }}
-    div[data-testid="stDeployButton"] {{ display: none !important; }}
-    .viewerBadge_container__1S9of {{ display: none !important; }}
-    
-    /* 2. HIDE THE STREAMLIT AUDIO PLAYER CONTAINER COMPLETELY */
+    /* 1. ABSOLUTE FORCE-HIDE FOR STREAMLIT FOOTER & BRANDING BAR */
+    footer, 
+    [data-testid="stFooter"], 
+    [class*="stFooter"],
+    .stAppFooter,
+    #MainMenu, 
+    header, 
+    [data-testid="stHeader"],
+    [data-testid="stDecoration"], 
+    .stDeployButton, 
+    [data-testid="stStatusWidget"], 
+    [data-testid="stViewerBadge"] {{
+        display: none !important;
+        visibility: hidden !important;
+        height: 0px !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }}
+
+    /* 2. HIDE STREAMLIT AUDIO PLAYER */
     .stAudio {{
         display: none !important;
         height: 0px !important;
         visibility: hidden !important;
     }}
 
-    /* 3. Main Container Settings */
+    /* 3. Global Background Settings */
     [data-testid="stAppViewContainer"] {{
         background-color: #121624 !important;
         background-image: url("{bg_image_url}") !important;
         background-repeat: repeat !important;
         background-size: 450px 720px !important;
         animation: matrixScroll 15s linear infinite !important;
+        padding-bottom: 0px !important;
     }}
 
-    section.main, .stApp, [data-testid="stSidebar"] {{
+    section.main, .stApp {{
         background: transparent !important;
+        padding-bottom: 0px !important;
     }}
 
+    /* 4. Center Card Box Styling */
     [data-testid="stAppViewBlockContainer"] {{
         background-color: #080b11 !important;
         border: 2px solid #00ff66 !important;
         border-radius: 16px !important;
         box-shadow: 0 0 30px rgba(0, 255, 102, 0.3) !important;
         max-width: 600px !important;
-        margin: 40px auto !important;
-        padding: 35px !important;
+        margin: 30px auto !important;
+        padding: 30px 25px !important;
     }}
 
-    /* 4. Text & Input Area Styling */
+    /* Typography */
     h1 {{
         color: #00ff66 !important;
         font-family: 'Courier New', monospace !important;
         font-weight: bold !important;
         text-shadow: 0 0 10px rgba(0, 255, 102, 0.6) !important;
         text-align: center;
+        font-size: 28px !important;
     }}
 
     label, p, span, div {{
@@ -113,7 +125,6 @@ global_css = f"""
         border-radius: 8px !important;
     }}
 
-    /* 5. Custom Button Design */
     div.stButton > button {{
         background-color: #00ff66 !important;
         color: #121624 !important;
@@ -130,6 +141,18 @@ global_css = f"""
     @keyframes matrixScroll {{
         0% {{ background-position: 0 0; }}
         100% {{ background-position: 0 720px; }}
+    }}
+
+    /* Mobile Responsive Settings */
+    @media (max-width: 640px) {{
+        [data-testid="stAppViewBlockContainer"] {{
+            margin: 10px auto !important;
+            padding: 20px 15px !important;
+            border-radius: 12px !important;
+        }}
+        h1 {{
+            font-size: 22px !important;
+        }}
     }}
 </style>
 """
@@ -167,7 +190,7 @@ if model is None:
     st.error("Dataset load nahi ho paya!")
     st.stop()
 
-# --- HIDDEN MP3 AUDIO PLAYER (Instant Playback in Background) ---
+# --- HIDDEN MP3 AUDIO PLAYER ---
 def play_voice_alert(text):
     tts = gTTS(text=text, lang='hi')
     fp = io.BytesIO()
@@ -176,22 +199,31 @@ def play_voice_alert(text):
     st.audio(fp, format="audio/mp3", autoplay=True)
 
 # --- UI LAYOUT ---
-st.title("🛡️ CYBER SPAM SHIELD")
+st.markdown(
+    """
+    <div style="text-align: center; margin-top: 5px;">
+        <span style="font-size: 40px;">🛡️</span>
+    </div>
+    """, 
+    unsafe_allow_html=True
+)
+st.title("CYBER SPAM SHIELD")
 
 st.markdown(
     f"""
-    <div style="text-align: center; margin-bottom: 25px;">
+    <div style="text-align: center; margin-bottom: 20px;">
         <span style="
             background: rgba(0, 255, 102, 0.1);
             border: 1px solid #00ff66;
             color: #00ff66;
-            padding: 6px 16px;
+            padding: 6px 14px;
             border-radius: 50px;
-            font-size: 13px;
+            font-size: 12px;
             font-family: monospace;
             letter-spacing: 1px;
+            display: inline-block;
         ">
-            SYSTEM ACTIVE | MODEL ACCURACY: {accuracy*100:.2f}%
+            SYSTEM ACTIVE | ACCURACY: {accuracy*100:.2f}%
         </span>
     </div>
     """, 
@@ -200,7 +232,7 @@ st.markdown(
 
 user_input = st.text_area("Hacker, enter SMS or Email message to scan:", placeholder="Type or paste your message here...")
 
-st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
+st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
 
 if st.button("RUN SCANNING"):
     if user_input.strip() == "":
@@ -238,7 +270,7 @@ if st.button("RUN SCANNING"):
                     text-align: center !important;
                     box-shadow: 0 0 15px rgba(255, 0, 60, 0.25) !important;
                 ">
-                    <h3 style="color: #ff3366 !important; font-family: monospace; font-weight: bold; margin: 0; font-size: 18px;">🚨 THREAT DETECTED: SPAM</h3>
+                    <h3 style="color: #ff3366 !important; font-family: monospace; font-weight: bold; margin: 0; font-size: 16px;">🚨 THREAT DETECTED: SPAM</h3>
                 </div>
                 """, 
                 unsafe_allow_html=True
