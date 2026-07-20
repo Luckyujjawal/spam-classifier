@@ -13,17 +13,32 @@
         html, body {
             width: 100%;
             height: 100%;
-            overflow: hidden;
+            overflow: hidden !important; /* Crops anything outside the screen */
             background-color: #121624;
             font-family: 'Courier New', Courier, monospace;
         }
+
+        /* Outer Frame Container */
+        .app-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden !important;
+        }
+
+        /* Iframe Height Trick: Pushes bottom Streamlit footer 45px below visible screen */
         iframe {
             width: 100%;
-            height: 100%;
+            height: calc(100vh + 45px) !important; 
             border: none;
             display: block;
             background: transparent;
+            margin-bottom: -45px !important;
         }
+
+        /* Hacker Loading Screen */
         #loader {
             position: fixed;
             top: 0;
@@ -38,6 +53,7 @@
             z-index: 99999;
             transition: opacity 0.8s ease, visibility 0.8s ease;
         }
+
         .spinner {
             width: 60px;
             height: 60px;
@@ -48,6 +64,7 @@
             box-shadow: 0 0 15px rgba(0, 255, 102, 0.4);
             margin-bottom: 20px;
         }
+
         .loading-text {
             color: #00ff66;
             font-size: 16px;
@@ -57,14 +74,17 @@
             text-shadow: 0 0 8px rgba(0, 255, 102, 0.6);
             animation: pulse 1.5s ease-in-out infinite;
         }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
         @keyframes pulse {
             0%, 100% { opacity: 0.6; }
             50% { opacity: 1; }
         }
+
         .fade-out {
             opacity: 0;
             visibility: hidden;
@@ -74,19 +94,21 @@
 </head>
 <body>
 
-    <!-- Professional Hacker Loading Screen -->
+    <!-- Loading Overlay -->
     <div id="loader">
         <div class="spinner"></div>
         <div class="loading-text">Bypassing Firewalls...</div>
     </div>
 
-    <!-- Embedded Secure Streamlit App -->
-    <iframe 
-        id="appFrame"
-        src="https://uk-spam-classifier.streamlit.app/?embed=true" 
-        allow="autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-        allowfullscreen>
-    </iframe>
+    <!-- Cropped Frame Container -->
+    <div class="app-container">
+        <iframe 
+            id="appFrame"
+            src="https://uk-spam-classifier.streamlit.app/?embed=true" 
+            allow="autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+        </iframe>
+    </div>
 
     <script>
         const iframe = document.getElementById('appFrame');
@@ -98,7 +120,6 @@
             }, 1500); 
         };
 
-        // Fallback
         setTimeout(() => {
             if (!loader.classList.contains('fade-out')) {
                 loader.classList.add('fade-out');
