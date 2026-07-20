@@ -46,9 +46,16 @@ svg_content = f"""<svg xmlns='http://www.w3.org/2000/svg' width='450' height='72
 encoded_svg = base64.b64encode(svg_content.encode('utf-8')).decode('utf-8')
 bg_image_url = f"data:image/svg+xml;base64,{encoded_svg}"
 
-# --- CSS STYLING ---
+# --- CSS STYLING (WITH HIDDEN AUDIO PLAYER) ---
 global_css = f"""
 <style>
+    /* HIDE THE STREAMLIT AUDIO PLAYER CONTAINER COMPLETELY */
+    .stAudio {{
+        display: none !important;
+        height: 0px !important;
+        visibility: hidden !important;
+    }}
+
     [data-testid="stAppViewContainer"] {{
         background-color: #121624 !important;
         background-image: url("{bg_image_url}") !important;
@@ -146,7 +153,7 @@ if model is None:
     st.error("Dataset load nahi ho paya!")
     st.stop()
 
-# --- NATIVE MP3 AUDIO PLAYER (Instant Playback) ---
+# --- HIDDEN MP3 AUDIO PLAYER (Instant Playback in Background) ---
 def play_voice_alert(text):
     tts = gTTS(text=text, lang='hi')
     fp = io.BytesIO()
