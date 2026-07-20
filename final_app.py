@@ -1,6 +1,6 @@
 import pandas as pd
 import streamlit as st
-import urllib.parse
+import base64
 import random
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
@@ -9,58 +9,88 @@ from sklearn.naive_bayes import MultinomialNB
 # --- WEB UI CONFIG ---
 st.set_page_config(page_title="AI Cyber Shield Classifier", page_icon="🛡️", layout="centered")
 
-# --- GENERATE HIGH-QUALITY BRIGHT MATRIX RAIN SVG ---
+# --- GENERATE ULTRA-BRIGHT MATRIX RAIN SVG ---
+# Is baar hum aur zyada dense, bright aur clear binary numbers generator design kar rahe hain
 svg_cols = []
-random.seed(101)
+random.seed(101)  # Pattern hamesha beautiful aur synchronized rahe
 
-# Columns aur numbers ki density aur brightness badha di gayi hai
-for col in range(16):
-    x = 10 + col * 20
-    for y in range(15, 600, 30):
+for col in range(25):  # Dense columns
+    x = col * 18 + 8
+    # Har column ke liye random length aur position generator
+    for row in range(22):
+        y = row * 36 + random.randint(0, 15)
         char = random.choice(['0', '1'])
-        # Opacity badha di gayi hai taaki bright aur clear dikhe (0.4 se 1.0 ke beech)
-        opacity = round(random.uniform(0.4, 1.0), 2)
-        weight = "bold" if opacity > 0.7 else "normal"
-        # Font size 13 se 15 kar diya gaya hai
-        svg_cols.append(f"<text x='{x}' y='{y}' fill='%2300ff66' opacity='{opacity}' font-family='monospace' font-size='15' font-weight='{weight}'>{char}</text>")
+        
+        # Super Bright Colors Scheme for Extreme Visibility
+        rand_val = random.random()
+        if rand_val > 0.85:
+            color = "%23ffffff"  # Glowing white head for true matrix feeling
+            opacity = 1.0
+            font_size = 18
+            font_weight = "900"  # Extra Bold
+        elif rand_val > 0.4:
+            color = "%2300ff66"  # Ultra bright neon green
+            opacity = 0.95
+            font_size = 16
+            font_weight = "bold"
+        else:
+            color = "%231aff66"  # Bright vibrant green
+            opacity = 0.80
+            font_size = 14
+            font_weight = "bold"
 
-svg_content = f"""<svg xmlns='http://www.w3.org/2000/svg' width='300' height='600' viewBox='0 0 300 600'>
+        svg_cols.append(
+            f"<text x='{x}' y='{y}' fill='{color}' opacity='{opacity}' "
+            f"font-family='monospace' font-size='{font_size}' font-weight='{font_weight}'>{char}</text>"
+        )
+
+svg_content = f"""<svg xmlns='http://www.w3.org/2000/svg' width='450' height='800' viewBox='0 0 450 800'>
+    <rect width='100%25' height='100%25' fill='%2302050e'/>
     {"".join(svg_cols)}
 </svg>"""
 
-encoded_svg = urllib.parse.quote(svg_content)
+# Base64 string encoding to bypass all web browser restrictions
+encoded_svg = base64.b64encode(svg_content.encode('utf-8')).decode('utf-8')
+bg_image_url = f"data:image/svg+xml;base64,{encoded_svg}"
 
-# --- GLOBAL STYLING & CORE CSS ---
+# --- GLOBAL STYLING & STREAMLIT INNER-SHELL TRANSPARENCY ---
 global_css = f"""
 <style>
-    /* 1. Global background */
-    html {{
-        background-color: #02040a !important;
-        background-image: url("data:image/svg+xml;utf8,{encoded_svg}") !important;
+    /* 1. Applying the Scrolling Matrix background directly to the top-level container */
+    [data-testid="stAppViewContainer"] {{
+        background-color: #02050e !important;
+        background-image: url("{bg_image_url}") !important;
         background-repeat: repeat !important;
-        background-size: 300px 600px !important;
-        animation: matrixScroll 12s linear infinite !important; /* Speed thodi fast ki hai */
+        background-size: 450px 800px !important;
+        animation: matrixScroll 12s linear infinite !important;
     }}
 
-    /* 2. Transparent wrappers */
-    body, .stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {{
+    /* 2. FORCE COMPLETE TRANSPARENCY on all of Streamlit's default dark overlay divs */
+    /* Isse background image bina kisi lag ya dimming ke 100% chamakdar dikhegi */
+    section.main, 
+    .stApp, 
+    [data-testid="stHeader"], 
+    [data-testid="stSidebar"],
+    .st-emotion-cache-16ids93,
+    .st-emotion-cache-1y4p8pa,
+    .st-emotion-cache-z5fcl4,
+    [data-testid="stVerticalBlock"] {{
         background: transparent !important;
+        background-color: transparent !important;
     }}
 
-    /* 3. Main Glassmorphic Box - Thoda transparent kiya taaki piche ka rain dikhe */
+    /* 3. Center Cyber glass card wrapper design for best readability */
     [data-testid="stAppViewBlockContainer"] {{
-        background: rgba(10, 15, 30, 0.82) !important;
-        backdrop-filter: blur(8px) !important;
-        -webkit-backdrop-filter: blur(8px) !important;
-        border: 2px solid rgba(0, 255, 102, 0.6) !important;
+        background-color: rgba(5, 10, 20, 0.95) !important; /* Non-transparent solid dark card */
+        border: 2px solid #00ff66 !important;
         border-radius: 16px !important;
-        padding: 35px !important;
-        box-shadow: 0 0 40px rgba(0, 255, 102, 0.15) !important;
-        max-width: 650px !important;
-        margin: 60px auto !important;
+        box-shadow: 0 0 40px rgba(0, 255, 102, 0.3) !important;
+        max-width: 600px !important;
+        margin: 50px auto !important;
+        padding: 40px !important;
     }}
 
-    /* 4. Text Fonts */
+    /* 4. High-Contrast Text Settings */
     h1 {{
         color: #00ff66 !important;
         font-family: 'Courier New', monospace !important;
@@ -75,11 +105,11 @@ global_css = f"""
         font-family: 'Segoe UI', sans-serif !important;
     }}
 
-    /* 5. Custom Input Area Box */
+    /* 5. Custom Input Area Box Styling */
     .stTextArea textarea {{
-        background-color: rgba(5, 10, 25, 0.9) !important;
+        background-color: #080d1a !important;
         color: #00ff66 !important;
-        border: 1px solid rgba(0, 255, 102, 0.6) !important;
+        border: 1px solid rgba(0, 255, 102, 0.5) !important;
         font-family: 'Courier New', monospace !important;
         font-size: 16px !important;
         border-radius: 8px !important;
@@ -87,13 +117,13 @@ global_css = f"""
 
     .stTextArea textarea:focus {{
         border-color: #00ff66 !important;
-        box-shadow: 0 0 15px rgba(0, 255, 102, 0.5) !important;
+        box-shadow: 0 0 15px rgba(0, 255, 102, 0.6) !important;
     }}
 
     /* 6. Scan Button design */
     div.stButton > button {{
         background-color: #00ff66 !important;
-        color: #060814 !important;
+        color: #02050e !important;
         font-weight: bold !important;
         font-family: monospace !important;
         border: none !important;
@@ -106,13 +136,17 @@ global_css = f"""
 
     div.stButton > button:hover {{
         background-color: #ffffff !important;
-        box-shadow: 0 0 25px rgba(0, 255, 102, 0.7) !important;
+        box-shadow: 0 0 25px rgba(0, 255, 102, 0.8) !important;
     }}
 
-    /* 7. Keyframe animation */
+    /* 7. Super Smooth animation loop for the rain */
     @keyframes matrixScroll {{
-        0% {{ background-position: 0 0; }}
-        100% {{ background-position: 0 600px; }}
+        0% {{
+            background-position: 0 0;
+        }}
+        100% {{
+            background-position: 0 800px;
+        }}
     }}
 </style>
 """
@@ -145,6 +179,7 @@ def load_and_train_model():
     
     return model, cv, accuracy
 
+# Load machine learning files
 model, cv, accuracy = load_and_train_model()
 
 if model is None:
@@ -182,7 +217,7 @@ st.markdown(
     f"""
     <div style="text-align: center; margin-bottom: 25px;">
         <span style="
-            background: rgba(0, 255, 102, 0.15);
+            background: rgba(0, 255, 102, 0.1);
             border: 1px solid #00ff66;
             color: #00ff66;
             padding: 6px 16px;
@@ -190,7 +225,6 @@ st.markdown(
             font-size: 13px;
             font-family: monospace;
             letter-spacing: 1px;
-            font-weight: bold;
         ">
             SYSTEM ACTIVE | MODEL ACCURACY: {accuracy*100:.2f}%
         </span>
@@ -199,20 +233,24 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+# User input text area
 user_input = st.text_area("Hacker, enter SMS or Email message to scan:", placeholder="Type or paste your message here...")
 
 st.markdown("<div style='height: 15px;'></div>", unsafe_allow_html=True)
 
+# Scan execution
 if st.button("RUN SCANNING"):
     if user_input.strip() == "":
         st.warning("Pehle scan karne ke liye text enter karein!")
     else:
+        # Custom Bypass Rules
         spam_keywords = ["won", "claim", "clam", "lottery", "prize", "crore", "lakh", "selected", "free gift", "rewarded"]
         is_spam_keyword = any(word in user_input.lower() for word in spam_keywords)
 
         safe_keywords = ["debited", "credited", "refno", "upi user", "a/c", "sbi"]
         is_bank_msg = any(word in user_input.lower() for word in safe_keywords)
 
+        # ML prediction
         vect = cv.transform([user_input])
         prediction = model.predict(vect)
         
@@ -225,18 +263,19 @@ if st.button("RUN SCANNING"):
         else:
             is_spam = False
 
-        st.markdown("<hr style='border: 1px solid rgba(0, 255, 102, 0.25);'>", unsafe_allow_html=True)
+        st.markdown("<hr style='border: 1px solid rgba(0, 255, 102, 0.15);'>", unsafe_allow_html=True)
 
+        # Output blocks styled cleanly
         if is_spam:
             st.markdown(
                 """
                 <div style="
-                    background: rgba(33, 7, 12, 0.9) !important;
+                    background: #21070c !important;
                     border: 2px solid #ff003c !important;
                     border-radius: 8px !important;
                     padding: 15px !important;
                     text-align: center !important;
-                    box-shadow: 0 0 20px rgba(255, 0, 60, 0.4) !important;
+                    box-shadow: 0 0 15px rgba(255, 0, 60, 0.25) !important;
                 ">
                     <h3 style="color: #ff3366 !important; font-family: monospace; font-weight: bold; margin: 0; font-size: 18px;">🚨 THREAT DETECTED: SPAM</h3>
                 </div>
@@ -248,12 +287,12 @@ if st.button("RUN SCANNING"):
             st.markdown(
                 """
                 <div style="
-                    background: rgba(4, 31, 16, 0.9) !important;
+                    background: #041f10 !important;
                     border: 2px solid #00ff66 !important;
                     border-radius: 8px !important;
                     padding: 15px !important;
                     text-align: center !important;
-                    box-shadow: 0 0 20px rgba(0, 255, 102, 0.4) !important;
+                    box-shadow: 0 0 15px rgba(0, 255, 102, 0.2) !important;
                 ">
                     <h3 style="color: #33ff99 !important; font-family: monospace; font-weight: bold; margin: 0; font-size: 18px;">✅ THREAT SCAN: SECURE (HAM)</h3>
                 </div>
