@@ -1,6 +1,6 @@
 import pandas as pd
 import streamlit as st
-import streamlit.components.v1 as components
+import urllib.parse
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
@@ -40,44 +40,13 @@ st.write("---")
 # User Input Box
 user_input = st.text_area("Apna Message yahan paste karein:", placeholder="Type or paste your SMS here...")
 
-# --- SPEECH SYNTHESIS ENGINE (HTML + JS) ---
-def play_voice_alert(text, button_color="#4CAF50"):
-    html_code = f"""
-    <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
-        <button onclick="playTTS()" style="
-            background-color: {button_color}; 
-            color: white; 
-            border: none; 
-            padding: 8px 16px; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            font-size: 14px; 
-            font-weight: bold;
-            font-family: sans-serif;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
-        ">
-            🔊 Voice Alert Suniye
-        </button>
-    </div>
-
-    <script>
-        function playTTS() {{
-            if ('speechSynthesis' in window) {{
-                window.speechSynthesis.cancel();
-                var msg = new SpeechSynthesisUtterance("{text}");
-                msg.lang = 'hi-IN';
-                msg.pitch = 1.0;
-                msg.rate = 0.95;
-                window.speechSynthesis.speak(msg);
-            }}
-        }}
-        setTimeout(playTTS, 100);
-    </script>
-    """
-    components.html(html_code, height=55)
+# --- INSTANT VOICE PLAY FUNCTION ---
+# Yeh bina kisi extra click ke direct dynamic voice play karega
+def play_voice_alert(text):
+    encoded_text = urllib.parse.quote(text)
+    # Google's clean Hindi TTS API URL
+    audio_url = f"https://translate.google.com/translate_tts?ie=UTF-8&tl=hi&client=tw-ob&q={encoded_text}"
+    st.audio(audio_url, format="audio/mp3", autoplay=True)
 
 # Predict Button logic
 if st.button("Predict"):
@@ -99,10 +68,10 @@ if st.button("Predict"):
         else:
             is_spam = False
 
-        # Output Results
+        # Output Results with Auto-play audio
         if is_spam:
             st.error("🚨 SPAM Message!")
-            play_voice_alert("सावधान! यह एक फ्रॉड या स्पैम संदेश हो सकता है।", button_color="#d9534f")
+            play_voice_alert("सावधान! यह एक फ्रॉड या स्पैम संदेश हो सकता है।")
         else:
             st.success("✅ Safe (HAM) Message.")
-            play_voice_alert("यह संदेश पूरी तरह सुरक्षित है।", button_color="#5cb85c")
+            play_voice_alert("यह संदेश पूरी तरह सुरक्षित है।")
